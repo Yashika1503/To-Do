@@ -1,0 +1,21 @@
+-- Run this file against your PostgreSQL database to set up the schema
+-- psql -U postgres -d todo_db -f schema.sql
+
+CREATE TABLE IF NOT EXISTS users (
+  id          SERIAL PRIMARY KEY,
+  email       VARCHAR(255) UNIQUE NOT NULL,
+  password    VARCHAR(255) NOT NULL,
+  is_premium  BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS todos (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       VARCHAR(500) NOT NULL,
+  completed   BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Index for fast user-specific todo lookups
+CREATE INDEX IF NOT EXISTS idx_todos_user_id ON todos(user_id);
