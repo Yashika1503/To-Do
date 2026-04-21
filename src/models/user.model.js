@@ -24,6 +24,15 @@ const User = {
     );
     return rows[0];
   },
+
+  // NEW: upgrade user to premium after successful payment
+  async setPremium(id) {
+    const { rows } = await db.query(
+      'UPDATE users SET is_premium = TRUE WHERE id = $1 RETURNING id, email, is_premium',
+      [id]
+    );
+    return rows[0];
+  },
 };
 
 module.exports = User;
