@@ -124,5 +124,3 @@ async function deleteTodo(req, res) {
 }
 
 module.exports = { getTodos, createTodo, updateTodo, deleteTodo };
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc3Njc5MTQ5NiwiZXhwIjoxNzc3Mzk2Mjk2fQ.SonwlwGlN61K4k1igT1D1Uy33QQRzxkoeC4exVsLMoU

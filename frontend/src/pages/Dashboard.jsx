@@ -88,7 +88,7 @@ export default function Dashboard() {
               razorpay_signature: response.razorpay_signature,
             });
             upgradePremium();
-            alert('🎉 You are now Premium!');
+            alert(' You are now Premium!');
           } catch (err) {
             setError('Payment verified but upgrade failed: ' + err.message);
           }
