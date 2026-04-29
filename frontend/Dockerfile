@@ -5,12 +5,17 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN npm config set fetch-retries 5 \
+ && npm config set fetch-retry-mintimeout 20000 \
+ && npm config set fetch-retry-maxtimeout 120000
+
 COPY package*.json ./
-RUN npm ci
+
+RUN rm -f package-lock.json \
+ && npm install --legacy-peer-deps
 
 COPY . .
 
-# VITE_API_URL is injected at build time via --build-arg
 ARG VITE_API_URL=http://localhost:3000
 ENV VITE_API_URL=$VITE_API_URL
 
