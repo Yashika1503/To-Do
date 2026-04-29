@@ -2,12 +2,18 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const User = require('../models/user.model');
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay;
 
-const PREMIUM_AMOUNT = 49900; // ₹499 in paise
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_SECRET) {
+  const Razorpay = require("razorpay");
+
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_SECRET,
+  });
+}
+
+const PREMIUM_AMOUNT = 19900; // ₹199
 
 async function createOrder(req, res) {
   try {
