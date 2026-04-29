@@ -1,38 +1,28 @@
-# syntax=docker/dockerfile:1
-
-# ── Stage 1: Build ──────────────────────────────────────────
+# ── Stage 1: Build the React app ──────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN npm config set fetch-retries 5 \
- && npm config set fetch-retry-mintimeout 20000 \
- && npm config set fetch-retry-maxtimeout 120000
-
+# Cache dependencies separately
 COPY package*.json ./
+RUN npm ci
 
-RUN rm -f package-lock.json \
- && npm install --legacy-peer-deps
-
-COPY . .
-
-ARG VITE_API_URL=http://localhost:3000
+# Accept the backend URL at build time
+ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
+# Copy source and build
+COPY . .
 RUN npm run build
 
-# ── Stage 2: Serve ──────────────────────────────────────────
-FROM nginx:1.25-alpine
+# ── Stage 2: Serve with nginx ─────────────────────────────────────────────────
+FROM nginx:alpine
 
-# Remove default nginx page
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy built assets from stage 1
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# nginx config: serve SPA (handle React client-side routes)
+# Copy your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+# Copy the built React app from stage 1
+COPY --from=builder /app/dist /usr/share/nginx/html
 
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

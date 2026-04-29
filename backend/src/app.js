@@ -2,16 +2,17 @@ require('dotenv').config();
 require('./config/db');
 const cors = require('cors');
 const express = require('express');
+const passport = require('./config/passport');
 const app = express();
 
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-  ],
-  credentials: true
+  origin: true, // This allows whatever URL the frontend is currently using
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
 app.use(express.json());
+app.use(passport.initialize());
 
 app.get("/", (req, res) => {
   res.send("Backend is running");

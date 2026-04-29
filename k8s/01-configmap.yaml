@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-config
+data:
+  PORT: "3000"
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "todo_db"
+  DB_USER: "todo_user"
+  REDIS_URL: "redis://redis-service:6379"
+  JWT_EXPIRES_IN: "7d"
+  NODE_ENV: "production"
