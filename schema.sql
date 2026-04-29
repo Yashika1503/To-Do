@@ -1,6 +1,3 @@
--- Run this file against your PostgreSQL database to set up the schema
--- psql -U postgres -d todo_db -f schema.sql
-
 CREATE TABLE IF NOT EXISTS users (
   id          SERIAL PRIMARY KEY,
   email       VARCHAR(255) UNIQUE NOT NULL,
