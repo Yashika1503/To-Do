@@ -23,3 +23,6 @@ services:
 
   - type: redis
     name: redis
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: allow all
