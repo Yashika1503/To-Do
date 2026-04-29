@@ -7,7 +7,6 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://frontend-production-521a.up.railway.app/rl'
   ],
   credentials: true
 }));
