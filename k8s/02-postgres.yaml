@@ -46,10 +46,10 @@ spec:
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d
           readinessProbe:
-          exec:
-            command: ["pg_isready", "-U", "postgres", "-d", "todo_db"]
-          initialDelaySeconds: 10
-          periodSeconds: 5
+            exec:
+              command: ["pg_isready", "-U", "postgres", "-d", "todo_db"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources:
             requests:
               cpu: "100m"
