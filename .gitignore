@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+00-secret.yaml
 .env.local
 .env.production
 *.log
