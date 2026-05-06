@@ -35,11 +35,20 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: todo_db
+              valueFrom:
+                configMapKeyRef:
+                  name: todo-config
+                  key: DB_NAME
             - name: POSTGRES_USER
-              value: postgres
+              valueFrom:
+                configMapKeyRef:
+                  name: todo-config
+                  key: DB_USER
             - name: POSTGRES_PASSWORD
-              value: Yashika15
+              valueFrom:
+                secretKeyRef:
+                  name: todo-secret
+                  key: DB_PASSWORD
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
@@ -47,7 +56,7 @@ spec:
               mountPath: /docker-entrypoint-initdb.d
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "postgres", "-d", "todo_db"]
+              command: ["pg_isready", "-U", "todo_user", "-d", "todo_db"]
             initialDelaySeconds: 10
             periodSeconds: 5
           resources:

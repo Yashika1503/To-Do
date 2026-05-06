@@ -1,89 +1,23 @@
-# ── Persistent Volume Claim (stores DB data across pod restarts) ──────────────
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: ConfigMap
 metadata:
-  name: postgres-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+  name: postgres-init
+data:
+  schema.sql: |
+    CREATE TABLE IF NOT EXISTS users (
+      id          SERIAL PRIMARY KEY,
+      email       VARCHAR(255) UNIQUE NOT NULL,
+      password    VARCHAR(255) NOT NULL,
+      is_premium  BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
 
----
-# ── PostgreSQL Deployment ─────────────────────────────────────────────────────
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres
-spec:
-  replicas: 1          # DB must stay at 1 replica (single-writer)
-  selector:
-    matchLabels:
-      app: postgres
-  strategy:
-    type: Recreate     # Safe for single-instance DB with PVC
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-        - name: postgres
-          image: postgres:16-alpine
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: todo-config
-                  key: DB_NAME
-            - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: todo-config
-                  key: DB_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: todo-secret
-                  key: DB_PASSWORD
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-            - name: init-script
-              mountPath: /docker-entrypoint-initdb.d
-          readinessProbe:
-            exec:
-              command: ["pg_isready", "-U", "todo_user", "-d", "todo_db"]
-            initialDelaySeconds: 10
-            periodSeconds: 5
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "256Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-      volumes:
-        - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-pvc
-        - name: init-script
-          configMap:
-            name: postgres-init
-            optional: true   # OK if you run schema manually
+    CREATE TABLE IF NOT EXISTS todos (
+      id          SERIAL PRIMARY KEY,
+      user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title       VARCHAR(500) NOT NULL,
+      completed   BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
 
----
-# ── PostgreSQL Service (ClusterIP — only reachable inside cluster) ────────────
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-service
-spec:
-  selector:
-    app: postgres
-  ports:
-    - port: 5432
-      targetPort: 5432
+    CREATE INDEX IF NOT EXISTS idx_todos_user_id ON todos(user_id);
