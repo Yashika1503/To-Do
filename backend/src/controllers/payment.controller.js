@@ -2,16 +2,10 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const User = require('../models/user.model');
 
-let razorpay;
-
-if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_SECRET) {
-  const Razorpay = require("razorpay");
-
-  razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_SECRET,
-  });
-}
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,  // consistent name
+});
 
 const PREMIUM_AMOUNT = 19900; // ₹199
 
@@ -43,7 +37,7 @@ async function verifyPayment(req, res) {
   }
 
   const expectedSignature = crypto
-    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)  // consistent name
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest('hex');
 

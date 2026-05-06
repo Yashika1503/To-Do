@@ -6,9 +6,9 @@ const passport = require('./config/passport');
 const app = express();
 
 app.use(cors({
-  origin: true, // This allows whatever URL the frontend is currently using
+  origin: true,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());

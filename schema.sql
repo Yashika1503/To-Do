@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS users (
-  id          SERIAL PRIMARY KEY,
-  email       VARCHAR(255) UNIQUE NOT NULL,
-  password    VARCHAR(255) NOT NULL,
-  is_premium  BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255),
+  is_premium BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS todos (
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS todos (
   user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title       VARCHAR(500) NOT NULL,
   completed   BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Index for fast user-specific todo lookups
